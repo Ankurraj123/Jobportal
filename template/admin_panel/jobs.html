@@ -1,0 +1,76 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Jobs — Admin Panel{% endblock %}
+
+{% block panel_content %}
+<div
+    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <h2 style="font-size:1.5rem; font-weight:800; margin:0;">💼 Jobs</h2>
+    <form method="GET" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="text" name="q" value="{{ q }}" class="jp-form-control" placeholder="Search title or company..."
+            style="width:200px;">
+        <select name="status" class="jp-form-control" style="width:140px;" onchange="this.form.submit()">
+            <option value="" {% if not status %}selected{% endif %}>All Jobs</option>
+            <option value="pending" {% if status=='pending' %}selected{% endif %}>Pending</option>
+            <option value="active" {% if status=='active' %}selected{% endif %}>Active</option>
+            <option value="closed" {% if status=='closed' %}selected{% endif %}>Closed</option>
+        </select>
+        <button type="submit" class="jp-btn jp-btn-primary">Filter</button>
+        {% if q or status %}<a href="{% url 'admin_panel:jobs' %}" class="jp-btn jp-btn-outline">Clear</a>{% endif %}
+    </form>
+</div>
+
+<div class="jp-card" style="padding:0; overflow:hidden;">
+    <table class="jp-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Posted</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                <td><a href="{% url 'admin_panel:job_detail' job.id %}" style="font-weight:600;">{{ job.title }}</a>
+                </td>
+                <td style="color:var(--text-muted);">{{ job.company_name }}</td>
+                <td>
+                    {% if job.job_type == '1' %}<span class="jp-badge jp-badge-success">Full Time</span>
+                    {% elif job.job_type == '2' %}<span class="jp-badge jp-badge-danger">Part Time</span>
+                    {% else %}<span class="jp-badge jp-badge-info">Internship</span>{% endif %}
+                </td>
+                <td style="color:var(--text-muted); font-size:0.8rem;">{{ job.category.name }}</td>
+                <td style="color:var(--text-muted); font-size:0.8rem;">{{ job.timestamp|date:"d M Y" }}</td>
+                <td>
+                    {% if not job.is_published %}<span class="jp-badge"
+                        style="background:rgba(245,158,11,0.12);color:var(--warning);">Pending</span>
+                    {% elif job.is_closed %}<span class="jp-badge jp-badge-danger">Closed</span>
+                    {% else %}<span class="jp-badge jp-badge-success">Published</span>{% endif %}
+                </td>
+                <td style="display:flex; gap:5px; flex-wrap:wrap;">
+                    <a href="{% url 'admin_panel:job_detail' job.id %}" class="jp-btn"
+                        style="padding:4px 9px; font-size:0.72rem; background:var(--accent-light); color:var(--accent);">View</a>
+                    {% if not job.is_published %}
+                    <a href="{% url 'admin_panel:job_approve' job.id %}" class="jp-btn"
+                        style="padding:4px 9px; font-size:0.72rem; background:rgba(16,185,129,0.12); color:var(--success);">Approve</a>
+                    {% endif %}
+                    <a href="{% url 'admin_panel:job_delete' job.id %}" class="jp-btn"
+                        style="padding:4px 9px; font-size:0.72rem; background:rgba(239,68,68,0.12); color:var(--danger);"
+                        onclick="return confirm('Delete this job?')">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">No jobs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

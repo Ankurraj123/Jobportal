@@ -1,0 +1,1006 @@
+/* ===========================================
+   JOBPORTAL — Custom Theme with Day/Night Mode
+   =========================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── CSS Variables ─────────────────────────── */
+:root {
+    /* Light (Day) Mode */
+    --bg-primary: #f0f4ff;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-navbar: rgba(255, 255, 255, 0.9);
+    --bg-footer: #1a1f36;
+    --text-primary: #1a1f36;
+    --text-secondary: #5a6480;
+    --text-muted: #8c93ab;
+    --border-color: #e2e8f8;
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --accent-light: #eef2ff;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    --shadow-sm: 0 1px 4px rgba(79, 70, 229, 0.08);
+    --shadow-md: 0 4px 20px rgba(79, 70, 229, 0.12);
+    --shadow-lg: 0 10px 40px rgba(79, 70, 229, 0.18);
+    --card-radius: 16px;
+    --navbar-height: 70px;
+    --transition: 0.25s cubic-bezier(.4, 0, .2, 1);
+}
+
+[data-theme="dark"] {
+    /* Dark (Night) Mode */
+    --bg-primary: #0f1117;
+    --bg-secondary: #161b2e;
+    --bg-card: #1e2540;
+    --bg-navbar: rgba(15, 17, 23, 0.95);
+    --bg-footer: #0a0d18;
+    --text-primary: #e8eaf6;
+    --text-secondary: #9fa8da;
+    --text-muted: #5c6bc0;
+    --border-color: #2a3060;
+    --accent: #7c72ff;
+    --accent-hover: #6c62ef;
+    --accent-light: #1e2050;
+    --success: #34d399;
+    --danger: #f87171;
+    --warning: #fbbf24;
+    --info: #60a5fa;
+    --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Global Reset ──────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background var(--transition), color var(--transition);
+    min-height: 100vh;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* ─── Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+/* ─── Navbar ────────────────────────────────── */
+.jp-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: var(--navbar-height);
+    background: var(--bg-navbar);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.jp-navbar .container-fluid {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+}
+
+.jp-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+.jp-logo:hover {
+    opacity: 0.85;
+}
+
+.jp-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+}
+
+.jp-nav-links a {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: all var(--transition);
+}
+
+.jp-nav-links a:hover,
+.jp-nav-links a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+/* Dropdown */
+.jp-dropdown {
+    position: relative;
+}
+
+.jp-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: all var(--transition);
+    z-index: 200;
+}
+
+.jp-dropdown:hover .jp-dropdown-menu,
+.jp-dropdown:focus-within .jp-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.jp-dropdown-menu a {
+    display: block;
+    padding: 9px 14px;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.jp-dropdown-menu a:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+/* Navbar Buttons */
+.jp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    border: none;
+    outline: none;
+    text-decoration: none;
+}
+
+.jp-btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.35);
+}
+
+.jp-btn-primary:hover {
+    background: var(--accent-hover);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45);
+}
+
+.jp-btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+}
+
+.jp-btn-outline:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* Theme Toggle */
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: rotate(20deg);
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 6px;
+}
+
+/* ─── Hero Section ──────────────────────────── */
+.jp-hero {
+    background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 50%, #a78bfa 100%);
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.jp-hero::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    top: -200px;
+    right: -200px;
+}
+
+.jp-hero::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    bottom: -150px;
+    left: -100px;
+}
+
+.jp-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    letter-spacing: -1px;
+}
+
+.jp-hero p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.125rem;
+}
+
+/* Search Box */
+.jp-search-box {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+    flex-wrap: wrap;
+}
+
+.jp-search-box input,
+.jp-search-box select {
+    flex: 1;
+    min-width: 160px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: all var(--transition);
+    font-family: 'Inter', sans-serif;
+}
+
+.jp-search-box input:focus,
+.jp-search-box select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.jp-search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+.jp-search-box button {
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition);
+    font-family: 'Inter', sans-serif;
+}
+
+.jp-search-box button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* ─── Stats Bar ─────────────────────────────── */
+.jp-stats {
+    background: linear-gradient(135deg, #312e81, #4c1d95);
+    padding: 40px 0;
+}
+
+.jp-stat-item {
+    text-align: center;
+}
+
+.jp-stat-item .number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    display: block;
+    line-height: 1;
+}
+
+.jp-stat-item .caption {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ─── Section Titles ────────────────────────── */
+.jp-section {
+    padding: 70px 0;
+}
+
+.jp-section-title {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+.jp-section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-top: 8px;
+}
+
+.jp-accent-line {
+    width: 50px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 2px;
+    margin: 12px 0 0;
+}
+
+/* ─── Job Card ──────────────────────────────── */
+.jp-job-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--card-radius);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+}
+
+.jp-job-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent), #a78bfa);
+    border-radius: 4px 0 0 4px;
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.jp-job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+    color: inherit;
+}
+
+.jp-job-card:hover::before {
+    opacity: 1;
+}
+
+.jp-job-logo {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    color: var(--accent);
+    font-weight: 700;
+    overflow: hidden;
+}
+
+.jp-job-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.jp-job-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.jp-job-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.jp-job-company {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.jp-job-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.jp-job-location,
+.jp-job-salary {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jp-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.jp-badge-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+}
+
+.jp-badge-danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+}
+
+.jp-badge-info {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--info);
+}
+
+/* ─── Cards (generic) ───────────────────────── */
+.jp-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--card-radius);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    transition: background var(--transition), border-color var(--transition);
+}
+
+/* ─── Forms ─────────────────────────────────── */
+.jp-form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.jp-form-control {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    transition: all var(--transition);
+}
+
+.jp-form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.jp-form-control::placeholder {
+    color: var(--text-muted);
+}
+
+/* ─── Auth Pages ─────────────────────────────  */
+.jp-auth-wrap {
+    min-height: calc(100vh - var(--navbar-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background: var(--bg-primary);
+}
+
+.jp-auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: var(--shadow-lg);
+}
+
+.jp-auth-card h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.jp-auth-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 28px;
+}
+
+/* ─── Dashboard ─────────────────────────────── */
+.jp-dashboard-stat {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: #fff;
+    border-radius: var(--card-radius);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.jp-dashboard-stat::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.jp-dashboard-stat .stat-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.jp-dashboard-stat .stat-label {
+    font-size: 0.875rem;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+/* ─── Table ─────────────────────────────────── */
+.jp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.jp-table th {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.jp-table td {
+    padding: 14px 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.jp-table tr:hover td {
+    background: var(--accent-light);
+}
+
+/* ─── Pagination ─────────────────────────────  */
+.jp-pagination {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.jp-pagination a,
+.jp-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    transition: all var(--transition);
+    padding: 0 10px;
+}
+
+.jp-pagination a:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.jp-pagination .active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* ─── Alert Messages ─────────────────────────  */
+.jp-alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.jp-alert-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.jp-alert-error {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.jp-alert-info {
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+/* ─── Footer ─────────────────────────────────  */
+.jp-footer {
+    background: var(--bg-footer);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 60px 0 30px;
+}
+
+.jp-footer h5 {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+}
+
+.jp-footer ul {
+    list-style: none;
+    padding: 0;
+}
+
+.jp-footer ul li {
+    margin-bottom: 10px;
+}
+
+.jp-footer ul a {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.875rem;
+    transition: color var(--transition);
+}
+
+.jp-footer ul a:hover {
+    color: #fff;
+}
+
+.jp-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 40px;
+    padding-top: 24px;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.jp-footer-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #818cf8, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+/* ─── Loader ─────────────────────────────────  */
+.jp-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-primary);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease;
+}
+
+.jp-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.jp-spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── CTA Section ───────────────────────────── */
+.jp-cta {
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    border-radius: 20px;
+    padding: 50px 40px;
+    text-align: center;
+    color: #fff;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.jp-cta::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    top: -100px;
+    right: -100px;
+}
+
+.jp-cta h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.jp-cta p {
+    opacity: 0.85;
+    margin-bottom: 24px;
+}
+
+/* ─── Responsive ─────────────────────────────  */
+@media (max-width: 768px) {
+    .jp-nav-desktop {
+        display: none !important;
+    }
+
+    .mobile-menu-toggle {
+        display: flex !important;
+    }
+
+    .jp-hero {
+        padding: 50px 0 70px;
+    }
+
+    .jp-search-box {
+        flex-direction: column;
+    }
+
+    .jp-search-box input,
+    .jp-search-box select,
+    .jp-search-box button {
+        width: 100%;
+    }
+
+    .jp-job-card {
+        flex-wrap: wrap;
+    }
+
+    .jp-auth-card {
+        padding: 28px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .jp-stat-item .number {
+        font-size: 1.8rem;
+    }
+}
+
+/* ─── Mobile Nav Overlay ─────────────────────  */
+.jp-mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.jp-mobile-nav.open {
+    display: block;
+}
+
+.jp-mobile-nav-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100%;
+    background: var(--bg-card);
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+}
+
+.jp-mobile-nav-panel ul {
+    list-style: none;
+    margin-top: 20px;
+}
+
+.jp-mobile-nav-panel ul li {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.jp-mobile-nav-panel ul li a {
+    display: block;
+    padding: 14px 0;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.jp-close-nav {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+/* ─── Utility ───────────────────────────────── */
+.jp-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 24px 0;
+}
+
+.text-accent {
+    color: var(--accent);
+}
+
+.bg-accent {
+    background: var(--accent);
+}
+
+.jp-mb-1 {
+    margin-bottom: 8px;
+}
+
+.jp-mb-2 {
+    margin-bottom: 16px;
+}
+
+.jp-mb-3 {
+    margin-bottom: 24px;
+}
+
+.jp-mt-1 {
+    margin-top: 8px;
+}
+
+.jp-mt-2 {
+    margin-top: 16px;
+}
+
+.jp-gap-2 {
+    gap: 16px;
+}

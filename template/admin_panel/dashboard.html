@@ -1,0 +1,159 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Admin Dashboard — JobPortal{% endblock %}
+
+{% block panel_content %}
+<h2 style="font-size:1.6rem; font-weight:800; color:var(--text-primary); margin-bottom:6px;">📊 Dashboard</h2>
+<p style="color:var(--text-muted); margin-bottom:28px;">Welcome back, {{ request.user.first_name|default:"Admin" }}!
+    Here's your overview.</p>
+
+<!-- Stats Cards -->
+<div class="row" style="gap:0; margin-bottom:28px;">
+    <div class="col-6 col-md-3" style="padding:6px;">
+        <div class="jp-dashboard-stat">
+            <div class="stat-num">{{ total_employees }}</div>
+            <div class="stat-label">Employees</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" style="padding:6px;">
+        <div class="jp-dashboard-stat" style="background:linear-gradient(135deg,#059669,#34d399);">
+            <div class="stat-num">{{ total_employers }}</div>
+            <div class="stat-label">Employers</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" style="padding:6px;">
+        <div class="jp-dashboard-stat" style="background:linear-gradient(135deg,#d97706,#fbbf24);">
+            <div class="stat-num">{{ total_jobs }}</div>
+            <div class="stat-label">Total Jobs</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3" style="padding:6px;">
+        <div class="jp-dashboard-stat" style="background:linear-gradient(135deg,#dc2626,#f87171);">
+            <div class="stat-num">{{ pending_jobs }}</div>
+            <div class="stat-label">Pending Approval</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Employees -->
+    <div class="col-md-6" style="padding:6px;">
+        <div class="jp-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h5 style="font-weight:700; font-size:1rem; margin:0;">👤 Recent Employees</h5>
+                <a href="{% url 'admin_panel:employees' %}" style="font-size:0.8rem; color:var(--accent);">View all
+                    →</a>
+            </div>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in recent_employees %}
+                    <tr>
+                        <td><a href="{% url 'admin_panel:user_detail' emp.id %}">{{ emp.get_full_name|default:emp.email
+                                }}</a></td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ emp.email }}</td>
+                        <td>
+                            {% if emp.is_active %}<span class="jp-badge jp-badge-success">Active</span>
+                            {% else %}<span class="jp-badge jp-badge-danger">Inactive</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="color:var(--text-muted);">No employees yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Employers -->
+    <div class="col-md-6" style="padding:6px;">
+        <div class="jp-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h5 style="font-weight:700; font-size:1rem; margin:0;">🏢 Recent Employers</h5>
+                <a href="{% url 'admin_panel:employers' %}" style="font-size:0.8rem; color:var(--accent);">View all
+                    →</a>
+            </div>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in recent_employers %}
+                    <tr>
+                        <td><a href="{% url 'admin_panel:user_detail' emp.id %}">{{ emp.first_name|default:"—" }}</a>
+                        </td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ emp.email }}</td>
+                        <td>
+                            {% if emp.is_active %}<span class="jp-badge jp-badge-success">Active</span>
+                            {% else %}<span class="jp-badge jp-badge-danger">Inactive</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="color:var(--text-muted);">No employers yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Jobs -->
+    <div class="col-12" style="padding:6px; margin-top:12px;">
+        <div class="jp-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h5 style="font-weight:700; font-size:1rem; margin:0;">💼 Recent Jobs</h5>
+                <a href="{% url 'admin_panel:jobs' %}" style="font-size:0.8rem; color:var(--accent);">View all →</a>
+            </div>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in recent_jobs %}
+                    <tr>
+                        <td><a href="{% url 'admin_panel:job_detail' job.id %}">{{ job.title }}</a></td>
+                        <td style="color:var(--text-muted);">{{ job.company_name }}</td>
+                        <td>
+                            {% if job.job_type == '1' %}<span class="jp-badge jp-badge-success">Full Time</span>
+                            {% elif job.job_type == '2' %}<span class="jp-badge jp-badge-danger">Part Time</span>
+                            {% else %}<span class="jp-badge jp-badge-info">Internship</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if not job.is_published %}<span class="jp-badge"
+                                style="background:rgba(245,158,11,0.12);color:var(--warning);">Pending</span>
+                            {% elif job.is_closed %}<span class="jp-badge jp-badge-danger">Closed</span>
+                            {% else %}<span class="jp-badge jp-badge-success">Published</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if not job.is_published %}
+                            <a href="{% url 'admin_panel:job_approve' job.id %}" class="jp-btn jp-btn-primary"
+                                style="padding:4px 12px; font-size:0.75rem;">Approve</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

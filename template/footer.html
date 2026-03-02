@@ -1,0 +1,49 @@
+<footer class="jp-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-4 mb-4 mb-md-0">
+        <div class="jp-footer-logo">&#128188; JobPortal</div>
+        <p style="font-size:0.875rem; color:rgba(255,255,255,0.5); line-height:1.7;">
+          Connect top talent with great companies.<br>Find your next opportunity today.
+        </p>
+      </div>
+      <div class="col-6 col-md-2 mb-4 mb-md-0">
+        <h5>Jobs</h5>
+        <ul>
+          <li><a href="{% url 'jobapp:job-list' %}">Browse Jobs</a></li>
+          <li><a href="{% url 'jobapp:search_result' %}">Search Jobs</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md-2 mb-4 mb-md-0">
+        <h5>Account</h5>
+        <ul>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'jobapp:dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'account:logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'account:login' %}">Login</a></li>
+          <li><a href="{% url 'account:employee-registration' %}">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="col-6 col-md-4 mb-4 mb-md-0">
+        <h5>Employers</h5>
+        <ul>
+          {% if not user.is_authenticated %}
+          <li><a href="{% url 'account:employer-registration' %}">Post as Employer</a></li>
+          {% elif user.role == 'employer' %}
+          <li><a href="{% url 'jobapp:create-job' %}">Post a Job</a></li>
+          <li><a href="{% url 'jobapp:dashboard' %}">Manage Jobs</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="jp-footer-bottom">
+      <p style="color:rgba(255,255,255,0.35);">
+        &copy; {% now "Y" %} JobPortal. All rights reserved.
+        &nbsp;|&nbsp;
+        <a href="/admin/" style="color:rgba(255,255,255,0.4);">🛡️ Admin</a>
+      </p>
+    </div>
+  </div>
+</footer>

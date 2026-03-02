@@ -1,0 +1,29 @@
+{% if page_obj.has_other_pages %}
+<div class="jp-pagination">
+  <span id="page_navigator" style="color:var(--text-muted); font-size:0.875rem; margin-right:8px;">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </span>
+
+  <span id="prev_page">
+    {% if page_obj.has_previous %}
+    <a id="ajax_paginator" href="?page={{ page_obj.previous_page_number }}" class="prev">← Prev</a>
+    {% endif %}
+  </span>
+
+  <span id="page_no">
+    {% for i in page_obj.paginator.page_range %}
+    {% if page_obj.number == i %}
+    <a id="ajax_paginator" class="ajax_paginator_{{ i }} active" href="?page={{ i }}">{{ i }}</a>
+    {% else %}
+    <a id="ajax_paginator" class="ajax_paginator_{{ i }}" href="?page={{ i }}">{{ i }}</a>
+    {% endif %}
+    {% endfor %}
+  </span>
+
+  <span id="next_page">
+    {% if page_obj.has_next %}
+    <a id="ajax_paginator" class="next" href="?page={{ page_obj.next_page_number }}">Next →</a>
+    {% endif %}
+  </span>
+</div>
+{% endif %}

@@ -1,0 +1,141 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div style="background:linear-gradient(135deg,var(--accent),#7c3aed);padding:40px 0 80px;">
+  <div class="container">
+    <h1 style="color:#fff;font-size:1.8rem;font-weight:800;margin-bottom:4px;">
+      👥 Applicants for "{{ job.title }}"
+    </h1>
+    <p style="color:rgba(255,255,255,0.8);">
+      {{ all_applicants|length }} applicant{{ all_applicants|length|pluralize }} •
+      <a href="{% url 'jobapp:dashboard' %}" style="color:rgba(255,255,255,0.7);text-decoration:underline;">← Back to Dashboard</a>
+    </p>
+  </div>
+</div>
+
+<div class="container" style="margin-top:-40px;position:relative;z-index:2;padding-bottom:60px;">
+  {% include 'messages.html' %}
+
+  {% if all_applicants %}
+
+  <!-- Summary bar -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+    {% with total=all_applicants|length %}
+    <div class="jp-card" style="flex:1;min-width:140px;text-align:center;padding:16px;">
+      <div style="font-size:2rem;font-weight:800;color:var(--accent);">{{ total }}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">Total</div>
+    </div>
+    {% endwith %}
+    <div class="jp-card" style="flex:1;min-width:140px;text-align:center;padding:16px;">
+      <div style="font-size:2rem;font-weight:800;color:#10b981;">
+        {% with cnt=0 %}{% for a in all_applicants %}{% if a.status == 'accepted' %}{% with cnt=cnt|add:1 %}{% endwith %}{% endif %}{% endfor %}
+        {{ all_applicants|length }}{% endwith %}
+      </div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">Accepted</div>
+    </div>
+  </div>
+
+  <!-- Applicant Cards -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    {% for applicant in all_applicants %}
+    <div class="jp-card" style="border-left:4px solid
+      {% if applicant.status == 'accepted' %}#10b981
+      {% elif applicant.status == 'rejected' %}#ef4444
+      {% else %}var(--accent){% endif %};">
+
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- Avatar -->
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff;flex-shrink:0;">
+          {{ applicant.user.first_name|slice:":1"|upper|default:applicant.user.email|slice:":1"|upper }}
+        </div>
+
+        <!-- Details -->
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+            <span style="font-size:1.05rem;font-weight:700;color:var(--text-primary);">
+              {{ applicant.user.get_full_name|default:applicant.user.email }}
+            </span>
+            <!-- Status badge -->
+            {% if applicant.status == 'accepted' %}
+            <span style="background:#d1fae5;color:#065f46;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px;">✅ Accepted</span>
+            {% elif applicant.status == 'rejected' %}
+            <span style="background:#fee2e2;color:#991b1b;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px;">❌ Rejected</span>
+            {% else %}
+            <span style="background:#ede9fe;color:#6d28d9;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:20px;">⏳ Pending</span>
+            {% endif %}
+          </div>
+
+          <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
+            📧 {{ applicant.user.email }}
+            {% if applicant.user.gender %} &nbsp;•&nbsp; {{ applicant.user.get_gender_display }}{% endif %}
+            &nbsp;•&nbsp; Applied: {{ applicant.timestamp|date:"d M Y" }}
+          </div>
+
+          <!-- Skills -->
+          {% if applicant.user.skills %}
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
+            {% for skill in applicant.user.skills.split|slice:":8" %}
+            <span style="padding:3px 10px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:0.72rem;font-weight:600;">{{ skill|cut:"," }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <!-- Education snippet -->
+          {% if applicant.user.education %}
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:6px;">
+            🎓 {{ applicant.user.education|truncatewords:12 }}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0;">
+          {% if applicant.user.resume %}
+          <a href="{{ applicant.user.resume.url }}" target="_blank" class="jp-btn" style="font-size:0.8rem;padding:6px 14px;white-space:nowrap;">
+            📄 Download CV
+          </a>
+          {% endif %}
+
+          <a href="{% url 'jobapp:applicant-details' applicant.user.id %}" class="jp-btn" style="font-size:0.8rem;padding:6px 14px;white-space:nowrap;">
+            👁️ View Profile
+          </a>
+
+          {% if applicant.status != 'accepted' %}
+          <a href="{% url 'jobapp:update-applicant-status' applicant.id 'accepted' %}"
+            style="background:#10b981;color:#fff;font-size:0.8rem;padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:600;white-space:nowrap;">
+            ✅ Accept
+          </a>
+          {% endif %}
+
+          {% if applicant.status != 'rejected' %}
+          <a href="{% url 'jobapp:update-applicant-status' applicant.id 'rejected' %}"
+            style="background:#ef4444;color:#fff;font-size:0.8rem;padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:600;white-space:nowrap;">
+            ❌ Reject
+          </a>
+          {% endif %}
+
+          {% if applicant.status != 'pending' %}
+          <a href="{% url 'jobapp:update-applicant-status' applicant.id 'pending' %}"
+            style="background:var(--bg-secondary,#e5e7eb);color:var(--text-secondary);font-size:0.75rem;padding:5px 12px;border-radius:8px;text-decoration:none;white-space:nowrap;">
+            ↩ Reset
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="jp-card" style="text-align:center;padding:60px 0;">
+    <div style="font-size:4rem;">📭</div>
+    <h4 style="margin-top:16px;color:var(--text-muted);">No applicants yet</h4>
+    <p style="color:var(--text-muted);">Share your job posting so candidates can apply!</p>
+    <a href="{% url 'jobapp:single-job' job.id %}" class="jp-btn jp-btn-primary" style="margin-top:12px;display:inline-flex;">View Job Post →</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

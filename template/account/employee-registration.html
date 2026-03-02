@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register as Employee — JobPortal{% endblock %}
+
+{% block content %}
+<div class="jp-auth-wrap">
+  <div class="jp-auth-card" style="max-width:520px;">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-size:2.5rem; margin-bottom:12px;">👤</div>
+      <h2>Create Employee Account</h2>
+      <p>Find your next opportunity with JobPortal</p>
+    </div>
+
+    {% include 'messages.html' %}
+
+    {% if form.errors %}
+    {% for field in form %}{% for error in field.errors %}
+    <div class="jp-alert jp-alert-error">❌ {{ field.label }}: {{ error|escape }}</div>
+    {% endfor %}{% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+      <div style="margin-bottom:14px;">
+        <label class="jp-form-label" for="id_{{ field.name }}">{{ field.label }}</label>
+        {% if field.field.widget.input_type == 'select' or field.field.choices %}
+        <select class="jp-form-control" name="{{ field.name }}" id="id_{{ field.name }}">
+          {% for val, label in field.field.choices %}
+          <option value="{{ val }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+        {% else %}
+        <input type="{{ field.field.widget.input_type }}" class="jp-form-control" name="{{ field.name }}"
+          id="id_{{ field.name }}" placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}">
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="jp-btn jp-btn-primary"
+        style="width:100%; margin-top:8px; justify-content:center; font-size:1rem; padding:13px;">
+        Create Account →
+      </button>
+    </form>
+
+    <div class="jp-divider"></div>
+    <p style="text-align:center; font-size:0.875rem; color:var(--text-muted);">
+      Already have an account? <a href="{% url 'account:login' %}">Login here</a>
+      &nbsp;|&nbsp;
+      <a href="{% url 'account:employer-registration' %}">Register as Employer</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

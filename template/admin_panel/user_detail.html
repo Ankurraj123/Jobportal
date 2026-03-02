@@ -1,0 +1,145 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}{{ profile_user.email }} — Admin Panel{% endblock %}
+
+{% block panel_content %}
+<div
+    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <div>
+        <a href="javascript:history.back()" style="color:var(--text-muted); font-size:0.85rem;">← Back</a>
+        <h2 style="font-size:1.4rem; font-weight:800; margin:4px 0 0;">
+            {% if profile_user.role == 'employee' %}👤{% else %}🏢{% endif %}
+            {{ profile_user.get_full_name|default:profile_user.email }}
+        </h2>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <a href="{% url 'admin_panel:user_edit' profile_user.id %}" class="jp-btn jp-btn-primary">✏️ Edit</a>
+        <a href="{% url 'admin_panel:toggle_user' profile_user.id %}" class="jp-btn"
+            style="background:{% if profile_user.is_active %}rgba(239,68,68,0.12){% else %}rgba(16,185,129,0.12){% endif %}; color:{% if profile_user.is_active %}var(--danger){% else %}var(--success){% endif %};">
+            {% if profile_user.is_active %}🚫 Deactivate{% else %}✅ Activate{% endif %}
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Profile Info -->
+    <div class="col-md-4" style="padding:6px; margin-bottom:12px;">
+        <div class="jp-card" style="text-align:center;">
+            <div
+                style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#a78bfa); display:flex; align-items:center; justify-content:center; font-size:1.8rem; font-weight:800; color:#fff; margin:0 auto 16px;">
+                {{ profile_user.first_name|slice:":1"|upper|default:"?" }}
+            </div>
+            <h4 style="font-weight:700; margin-bottom:4px;">{{ profile_user.get_full_name|default:"—" }}</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">{{ profile_user.email }}</p>
+
+            <div style="display:flex; gap:8px; justify-content:center; margin-bottom:16px;">
+                <span
+                    class="jp-badge {% if profile_user.is_active %}jp-badge-success{% else %}jp-badge-danger{% endif %}">
+                    {% if profile_user.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+                <span class="jp-badge jp-badge-info">{{ profile_user.role|capfirst }}</span>
+            </div>
+
+            <div class="jp-divider"></div>
+            <div style="text-align:left;">
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Gender:</strong> {{
+                    profile_user.get_gender_display }}</p>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Joined:</strong> {{
+                    profile_user.date_joined|date:"d M Y" }}</p>
+                <p style="font-size:0.8rem; color:var(--text-muted);">
+                    <strong>Last Login:</strong> {{ profile_user.last_login|date:"d M Y H:i"|default:"Never" }}
+                </p>
+            </div>
+        </div>
+
+        {% if profile_user.role == 'employee' %}
+        <div class="jp-card" style="margin-top:12px;">
+            <h6 style="font-weight:700; margin-bottom:12px;">📋 Profile Details</h6>
+            {% if profile_user.bio %}<p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px;">
+                <strong>Bio:</strong> {{ profile_user.bio }}</p>{% endif %}
+            {% if profile_user.skills %}<p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px;">
+                <strong>Skills:</strong> {{ profile_user.skills }}</p>{% endif %}
+            {% if profile_user.education %}<p
+                style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px;"><strong>Education:</strong>
+                {{ profile_user.education }}</p>{% endif %}
+            {% if profile_user.experience %}<p style="font-size:0.85rem; color:var(--text-secondary);">
+                <strong>Experience:</strong> {{ profile_user.experience }}</p>{% endif %}
+            {% if profile_user.resume %}<p style="margin-top:8px;"><a href="{{ profile_user.resume.url }}"
+                    class="jp-btn jp-btn-outline" style="font-size:0.8rem; padding:5px 12px;">📄 Resume</a></p>{% endif
+            %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Applications / Posted Jobs -->
+    <div class="col-md-8" style="padding:6px;">
+        {% if profile_user.role == 'employee' %}
+        <div class="jp-card">
+            <h5 style="font-weight:700; margin-bottom:16px;">📬 Job Applications ({{ applications|length }})</h5>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Applied On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                        <td><a href="{% url 'admin_panel:job_detail' app.job.id %}">{{ app.job.title }}</a></td>
+                        <td style="color:var(--text-muted);">{{ app.job.company_name }}</td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ app.timestamp|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="color:var(--text-muted); padding:20px;">No applications yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="jp-card">
+            <h5 style="font-weight:700; margin-bottom:16px;">💼 Posted Jobs ({{ posted_jobs|length }})</h5>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Posted</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in posted_jobs %}
+                    <tr>
+                        <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                        <td><a href="{% url 'admin_panel:job_detail' job.id %}">{{ job.title }}</a></td>
+                        <td>
+                            {% if job.job_type == '1' %}<span class="jp-badge jp-badge-success">Full Time</span>
+                            {% elif job.job_type == '2' %}<span class="jp-badge jp-badge-danger">Part Time</span>
+                            {% else %}<span class="jp-badge jp-badge-info">Internship</span>{% endif %}
+                        </td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ job.timestamp|date:"d M Y" }}</td>
+                        <td>
+                            {% if not job.is_published %}<span class="jp-badge"
+                                style="background:rgba(245,158,11,0.12);color:var(--warning);">Pending</span>
+                            {% elif job.is_closed %}<span class="jp-badge jp-badge-danger">Closed</span>
+                            {% else %}<span class="jp-badge jp-badge-success">Published</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="color:var(--text-muted); padding:20px;">No jobs posted yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

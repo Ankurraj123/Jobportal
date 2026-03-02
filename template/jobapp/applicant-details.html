@@ -1,0 +1,176 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ applicant.get_full_name }} \u2014 Applicant Profile{% endblock %}
+
+{% block content %}
+<!-- HEADER -->
+<div style="background:linear-gradient(135deg,var(--accent),#7c3aed); padding:40px 0 80px;">
+  <div class="container" style="position:relative;z-index:1;">
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div class="jp-resume-avatar"
+        style="width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);border:3px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;color:#fff;flex-shrink:0;">
+        {{ applicant.first_name|slice:":1"|upper|default:"?" }}
+      </div>
+      <div>
+        <h1 style="color:#fff;font-size:1.8rem;font-weight:800;margin-bottom:4px;">
+          {{ applicant.get_full_name|default:applicant.email }}
+        </h1>
+        <p style="color:rgba(255,255,255,0.8);margin-bottom:8px;">{{ applicant.email }}</p>
+        {% if cv_links %}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          {% if cv_links.linkedin %}
+          <a href="{{ cv_links.linkedin }}" target="_blank"
+            style="background:rgba(255,255,255,0.2);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;text-decoration:none;">LinkedIn</a>
+          {% endif %}
+          {% if cv_links.github %}
+          <a href="{{ cv_links.github }}" target="_blank"
+            style="background:rgba(255,255,255,0.2);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;text-decoration:none;">GitHub</a>
+          {% endif %}
+          {% if cv_links.phone %}
+          <span
+            style="background:rgba(255,255,255,0.2);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;">{{ cv_links.phone }}</span>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div style="margin-left:auto; display:flex; gap:10px;">
+        {% if applicant.resume %}
+        <a href="{{ applicant.resume.url }}" target="_blank" class="jp-btn"
+          style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.4);">📄 Download CV</a>
+        {% endif %}
+        <a href="javascript:history.back()" class="jp-btn"
+          style="background:#fff;color:var(--accent);font-weight:700;">&larr; Back to Applicants</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="margin-top:-40px; position:relative; z-index:2; padding-bottom:60px;">
+  <div class="row">
+    <!-- LEFT SIDEBAR -->
+    <div class="col-md-4" style="padding:6px; margin-bottom:16px;">
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:16px;">Basic Info</h5>
+        <table style="width:100%;font-size:0.875rem;">
+          {% if applicant.gender %}
+          <tr>
+            <td style="padding:8px 0;color:var(--text-muted);width:110px;">Gender</td>
+            <td style="font-weight:500;">{{ applicant.get_gender_display }}</td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td style="padding:8px 0;color:var(--text-muted);">Joined on</td>
+            <td style="font-weight:500;">{{ applicant.date_joined|date:"d M Y" }}</td>
+          </tr>
+        </table>
+      </div>
+
+      {% if applicant.bio %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:12px;">About</h5>
+        <p style="font-size:0.875rem;color:var(--text-secondary);line-height:1.7;margin:0;">{{ applicant.bio }}</p>
+      </div>
+      {% endif %}
+
+      {% if skills_list %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:12px;">Skills</h5>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          {% for skill in skills_list %}
+          <span
+            style="padding:4px 12px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:0.78rem;font-weight:600;">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if cv_certificates %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:12px;">Certificates</h5>
+        <ul style="list-style:none;padding:0;margin:0;">
+          {% for cert in cv_certificates %}
+          <li style="padding:6px 0;border-bottom:1px solid var(--border-color);font-size:0.85rem;">{{ cert }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if cv_achievements %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:12px;">Achievements</h5>
+        <ul style="list-style:none;padding:0;margin:0;">
+          {% for ach in cv_achievements %}
+          <li style="padding:6px 0;border-bottom:1px solid var(--border-color);font-size:0.85rem;">{{ ach }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- RIGHT MAIN CONTENT -->
+    <div class="col-md-8" style="padding:6px;">
+      {% if applicant.education %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:16px;">Education</h5>
+        <p style="font-size:0.875rem;color:var(--text-secondary);line-height:1.7;">{{ applicant.education|linebreaksbr }}</p>
+      </div>
+      {% endif %}
+
+      {% if applicant.experience %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:16px;">Experience</h5>
+        <p style="font-size:0.875rem;color:var(--text-secondary);line-height:1.7;">{{ applicant.experience|linebreaksbr }}</p>
+      </div>
+      {% endif %}
+
+      {% if cv_projects %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:16px;">Projects</h5>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          {% for proj in cv_projects %}
+          <div
+            style="border:1px solid var(--border-color);border-radius:12px;padding:16px;background:var(--bg-secondary,#f8f9fa);">
+            <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:6px;">{{ proj.title }}
+            </div>
+            {% if proj.description %}
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:8px;">{{ proj.description }}</p>
+            {% endif %}
+            {% if proj.tech %}
+            <div
+              style="font-size:0.78rem;color:var(--accent);font-weight:600;background:var(--accent-light);display:inline-block;padding:2px 10px;border-radius:20px;">
+              {{ proj.tech }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if cv_training %}
+      <div class="jp-card" style="margin-bottom:16px;">
+        <h5 style="font-weight:700;margin-bottom:16px;">Training &amp; Courses</h5>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+          {% for t in cv_training %}
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:0.875rem;color:var(--text-secondary);">{{ t }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if not applicant.education and not applicant.experience and not cv_projects %}
+      <div class="jp-card" style="text-align:center;padding:40px 10px;">
+        <div style="font-size:3rem;margin-bottom:10px;">📄</div>
+        <h5 style="color:var(--text-muted);">No Details Extracted</h5>
+        <p style="color:var(--text-muted);font-size:0.875rem;">This applicant has not provided detailed profile
+          information yet.</p>
+        {% if applicant.resume %}
+        <a href="{{ applicant.resume.url }}" target="_blank" class="jp-btn jp-btn-primary"
+          style="margin-top:10px;display:inline-flex;">View Original CV</a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

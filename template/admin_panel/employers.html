@@ -1,0 +1,68 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Employers — Admin Panel{% endblock %}
+
+{% block panel_content %}
+<div
+    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <h2 style="font-size:1.5rem; font-weight:800; margin:0;">🏢 Employers</h2>
+    <form method="GET" style="display:flex; gap:8px;">
+        <input type="text" name="q" value="{{ q }}" class="jp-form-control" placeholder="Search company or email..."
+            style="width:260px;">
+        <button type="submit" class="jp-btn jp-btn-primary">Search</button>
+        {% if q %}<a href="{% url 'admin_panel:employers' %}" class="jp-btn jp-btn-outline">Clear</a>{% endif %}
+    </form>
+</div>
+
+<div class="jp-card" style="padding:0; overflow:hidden;">
+    <table class="jp-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Company Name</th>
+                <th>Email</th>
+                <th>Joined</th>
+                <th>Jobs Posted</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employers %}
+            <tr>
+                <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'admin_panel:user_detail' emp.id %}" style="font-weight:600;">
+                        {{ emp.first_name|default:"—" }}
+                    </a>
+                </td>
+                <td style="color:var(--text-muted); font-size:0.8rem;">{{ emp.email }}</td>
+                <td style="color:var(--text-muted); font-size:0.8rem;">{{ emp.date_joined|date:"d M Y" }}</td>
+                <td style="color:var(--text-muted);">{{ emp.User.count }}</td>
+                <td>
+                    {% if emp.is_active %}
+                    <span class="jp-badge jp-badge-success">Active</span>
+                    {% else %}
+                    <span class="jp-badge jp-badge-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <a href="{% url 'admin_panel:user_detail' emp.id %}" class="jp-btn"
+                        style="padding:4px 10px; font-size:0.75rem; background:var(--accent-light); color:var(--accent);">View</a>
+                    <a href="{% url 'admin_panel:user_edit' emp.id %}" class="jp-btn"
+                        style="padding:4px 10px; font-size:0.75rem; background:var(--accent); color:#fff;">Edit</a>
+                    <a href="{% url 'admin_panel:toggle_user' emp.id %}" class="jp-btn"
+                        style="padding:4px 10px; font-size:0.75rem; background:{% if emp.is_active %}rgba(239,68,68,0.12){% else %}rgba(16,185,129,0.12){% endif %}; color:{% if emp.is_active %}var(--danger){% else %}var(--success){% endif %};">
+                        {% if emp.is_active %}Deactivate{% else %}Activate{% endif %}
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center; padding:40px; color:var(--text-muted);">No employers found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

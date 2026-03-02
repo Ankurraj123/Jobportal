@@ -1,0 +1,121 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}{{ job.title }} — Admin Panel{% endblock %}
+
+{% block panel_content %}
+<div
+    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <div>
+        <a href="{% url 'admin_panel:jobs' %}" style="color:var(--text-muted); font-size:0.85rem;">← Back to Jobs</a>
+        <h2 style="font-size:1.4rem; font-weight:800; margin-top:4px;">💼 {{ job.title }}</h2>
+    </div>
+    <div style="display:flex; gap:8px;">
+        {% if not job.is_published %}
+        <a href="{% url 'admin_panel:job_approve' job.id %}" class="jp-btn"
+            style="background:rgba(16,185,129,0.12); color:var(--success);">✅ Approve</a>
+        {% endif %}
+        <a href="{% url 'admin_panel:job_delete' job.id %}" class="jp-btn"
+            style="background:rgba(239,68,68,0.12); color:var(--danger);"
+            onclick="return confirm('Delete this job permanently?')">🗑️ Delete</a>
+        <a href="{% url 'jobapp:single-job' job.id %}" target="_blank" class="jp-btn jp-btn-outline">🔗 View Live</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Job Details -->
+    <div class="col-md-5" style="padding:6px; margin-bottom:12px;">
+        <div class="jp-card">
+            <h5 style="font-weight:700; margin-bottom:16px;">Job Details</h5>
+
+            <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+                {% if job.job_type == '1' %}<span class="jp-badge jp-badge-success">Full Time</span>
+                {% elif job.job_type == '2' %}<span class="jp-badge jp-badge-danger">Part Time</span>
+                {% else %}<span class="jp-badge jp-badge-info">Internship</span>{% endif %}
+
+                {% if not job.is_published %}<span class="jp-badge"
+                    style="background:rgba(245,158,11,0.12);color:var(--warning);">Pending</span>
+                {% elif job.is_closed %}<span class="jp-badge jp-badge-danger">Closed</span>
+                {% else %}<span class="jp-badge jp-badge-success">Published</span>{% endif %}
+            </div>
+
+            <table style="width:100%; font-size:0.85rem;">
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted); width:120px;">Company</td>
+                    <td style="font-weight:600;">{{ job.company_name }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Category</td>
+                    <td>{{ job.category.name }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Location</td>
+                    <td>📍 {{ job.location }}</td>
+                </tr>
+                {% if job.salary %}<tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Salary</td>
+                    <td>💰 {{ job.salary }}</td>
+                </tr>{% endif %}
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Last Date</td>
+                    <td>{{ job.last_date }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Posted</td>
+                    <td>{{ job.timestamp|date:"d M Y" }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:7px 0; color:var(--text-muted);">Employer</td>
+                    <td><a href="{% url 'admin_panel:user_detail' job.user.id %}">{{ job.user.email }}</a></td>
+                </tr>
+            </table>
+
+            {% if job.url %}
+            <div class="jp-divider"></div>
+            <a href="{{ job.url }}" target="_blank" class="jp-btn jp-btn-outline"
+                style="font-size:0.8rem; width:100%; justify-content:center;">🌐 Company Website</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Description + Applicants -->
+    <div class="col-md-7" style="padding:6px;">
+        <div class="jp-card" style="margin-bottom:12px;">
+            <h5 style="font-weight:700; margin-bottom:12px;">Description</h5>
+            <div style="font-size:0.875rem; color:var(--text-secondary); line-height:1.7;">{{ job.description|safe }}
+            </div>
+        </div>
+
+        <div class="jp-card">
+            <h5 style="font-weight:700; margin-bottom:16px;">👥 Applicants ({{ applicants|length }})</h5>
+            <table class="jp-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Applied</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applicants %}
+                    <tr>
+                        <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
+                        <td><a href="{% url 'admin_panel:user_detail' app.user.id %}">{{
+                                app.user.get_full_name|default:app.user.email }}</a></td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ app.user.email }}</td>
+                        <td style="color:var(--text-muted); font-size:0.8rem;">{{ app.timestamp|date:"d M Y" }}</td>
+                        <td><a href="{% url 'admin_panel:user_detail' app.user.id %}" class="jp-btn"
+                                style="padding:3px 8px; font-size:0.72rem; background:var(--accent-light); color:var(--accent);">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="color:var(--text-muted); padding:20px;">No applications yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

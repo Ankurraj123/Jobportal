@@ -1,0 +1,11 @@
+{% if messages %}
+<div class="container" style="margin-top:16px;">
+  {% for message in messages %}
+  <div
+    class="jp-alert {% if message.tags == 'success' %}jp-alert-success{% elif message.tags == 'error' %}jp-alert-error{% else %}jp-alert-info{% endif %}">
+    {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

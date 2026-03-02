@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body id="top">
+
+    <!-- Page Loader -->
+    <div class="jp-loader" id="jp-loader">
+      <div class="jp-spinner"></div>
+    </div>
+
+    {% include 'header.html' %}
+
+    <!-- Mobile Nav Overlay -->
+    <div class="jp-mobile-nav" id="jp-mobile-nav">
+      <div class="jp-mobile-nav-panel">
+        <button class="jp-close-nav" id="jp-close-nav">&times;</button>
+        <div style="margin-top:16px; font-size:1.2rem; font-weight:800; background:linear-gradient(135deg,var(--accent),#a78bfa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">JobPortal</div>
+        <ul>
+          <li><a href="{% url 'jobapp:home' %}">Home</a></li>
+          <li><a href="{% url 'jobapp:job-list' %}">Job Listings</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'jobapp:dashboard' %}">Dashboard</a></li>
+            {% if user.role == 'employer' %}
+              <li><a href="{% url 'jobapp:create-job' %}">Post a Job</a></li>
+            {% else %}
+              <li><a href="{% url 'account:edit-profile' request.user.id %}">Edit Profile</a></li>
+            {% endif %}
+            <li><a href="{% url 'account:logout' %}">Logout</a></li>
+          {% else %}
+            <li><a href="{% url 'account:login' %}">Login</a></li>
+            <li><a href="{% url 'account:employee-registration' %}">Register as Employee</a></li>
+            <li><a href="{% url 'account:employer-registration' %}">Register as Employer</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    {% include 'messages.html' %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    {% include 'footer.html' %}
+    {% include 'scripts.html' %}
+    {% block extra_scripts %}{% endblock %}
+
+    <!-- Theme + Mobile Nav JS -->
+    <script>
+      // Loader
+      window.addEventListener('load', function() {
+        var loader = document.getElementById('jp-loader');
+        if (loader) {
+          loader.classList.add('hidden');
+          setTimeout(function() { loader.remove(); }, 500);
+        }
+      });
+
+      // Theme Toggle
+      var themeBtn = document.getElementById('jp-theme-toggle');
+      var sunIcon  = document.getElementById('jp-sun');
+      var moonIcon = document.getElementById('jp-moon');
+
+      function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('jp-theme', t);
+        if (sunIcon && moonIcon) {
+          if (t === 'dark') {
+            sunIcon.style.display  = 'inline';
+            moonIcon.style.display = 'none';
+          } else {
+            sunIcon.style.display  = 'none';
+            moonIcon.style.display = 'inline';
+          }
+        }
+      }
+
+      // On load, sync icons
+      applyTheme(localStorage.getItem('jp-theme') || 'light');
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+
+      // Mobile Nav
+      var menuToggle  = document.getElementById('jp-menu-toggle');
+      var mobileNav   = document.getElementById('jp-mobile-nav');
+      var closeNav    = document.getElementById('jp-close-nav');
+
+      if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+          mobileNav.classList.add('open');
+        });
+      }
+      if (closeNav) {
+        closeNav.addEventListener('click', function() {
+          mobileNav.classList.remove('open');
+        });
+      }
+      if (mobileNav) {
+        mobileNav.addEventListener('click', function(e) {
+          if (e.target === mobileNav) mobileNav.classList.remove('open');
+        });
+      }
+    </script>
+  </body>
+</html>

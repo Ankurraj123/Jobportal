@@ -1,0 +1,30 @@
+{% load static %}
+<head>
+    <title>{% block title %}JobPortal — Find Your Dream Job{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="JobPortal — Find and post jobs easily">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/line-icons/style.css' %}">
+
+    <!-- Bootstrap (layout grid only) -->
+    <link rel="stylesheet" href="{% static 'css/custom-bs.css' %}">
+
+    <!-- Our new design system -->
+    <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+
+    <!-- Theme init (prevent flash) -->
+    <script>
+      (function() {
+        var t = localStorage.getItem('jp-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+</head>
