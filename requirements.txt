@@ -20,3 +20,4 @@ dnspython
 django-cors-headers
 django-taggit==3.1.0
 djangorestframework-simplejwt==5.2.2
+pdfplumber==0.7.4
