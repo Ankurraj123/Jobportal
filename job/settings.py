@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 import os
-import django_heroku
+# import django_heroku removed for Vercel compatibility
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -189,7 +189,7 @@ MESSAGE_TAGS = {
 
 
 # Activate Django-Heroku.
-django_heroku.settings(locals(), databases=False)
+# django_heroku settings removed for Vercel compatibility
 
 # Override heroku's storage setting — use whitenoise without manifest so admin CSS works
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
