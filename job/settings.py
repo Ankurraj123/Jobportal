@@ -95,14 +95,16 @@ WSGI_APPLICATION = 'job.wsgi.application'
 
 
 
-import dj_database_url
-
-if 'POSTGRES_URL' in os.environ:
+if os.environ.get('MONGODB_URI'):
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('POSTGRES_URL'),
-            conn_max_age=600
-        )
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': 'jobportal_db',
+            'ENFORCE_SCHEMA': False,
+            'CLIENT': {
+                'host': os.environ.get('MONGODB_URI')
+            }
+        }
     }
 else:
     DATABASES = {
