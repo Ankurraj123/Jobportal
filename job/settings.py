@@ -16,16 +16,12 @@ import django_heroku
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'etdq)uvq=t0rc&ams5_ovn6w8bcwknjj0u97*(#n^(76x*+dr1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'djobportal.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'djobportal.herokuapp.com', '.vercel.app', '*']
 
 
 # Application definition
@@ -39,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'jobapp.apps.JobappConfig',
+    
     'account.apps.AccountConfig',
 
     #3rd Party App
@@ -85,47 +82,33 @@ TEMPLATES = [
 WSGI_APPLICATION = 'job.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'jobportal',
-#         'USER': 'postgres',
-#         'PASSWORD': '1234',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if os.environ.get('MONGODB_URI'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': 'jobportal_db',
+            'ENFORCE_SCHEMA': False,
+            'CLIENT': {
+                'host': os.environ.get('MONGODB_URI')
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 #for debug toolbar
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
     # ...
 ]
-# CACHES
-# ------------------------------------------------------------------------------
 
-# CACHES = {
-#     "default": {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379',
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
-#         },
-#         "KEY_PREFIX": "config"
-#     }
-# }
-
-# Password validation
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -195,7 +178,7 @@ MESSAGE_TAGS = {
 
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+django_heroku.settings(locals(), databases=False)
 
 # Override heroku's storage setting — use whitenoise without manifest so admin CSS works
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
