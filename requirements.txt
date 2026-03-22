@@ -18,9 +18,7 @@ djongo==1.3.6
 pymongo==3.12.3
 dnspython
 django-cors-headers
-django-taggit==3.1.0
-djangorestframework-simplejwt==5.2.2
-pdfplumber==0.7.4
-sqlparse==0.4.4
-gunicorn==20.1.0
-pdfminer.six==20221105
+django-taggit
+djangorestframework-simplejwt
+pdfplumber
+pdfminer.six
