@@ -53,10 +53,13 @@ INSTALLED_APPS = [
     'ckeditor',
     'taggit',
     'user_visit',
-    'debug_toolbar',
     'rest_framework',
     'corsheaders',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,8 +72,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'user_visit.middleware.UserVisitMiddleware',   
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
 
 ROOT_URLCONF = 'job.urls'
 
