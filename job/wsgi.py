@@ -8,6 +8,12 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
 import os
+import collections
+
+# Patch for djongo compatibility with Python 3.10+
+if not hasattr(collections, 'Iterable'):
+    import collections.abc
+    collections.Iterable = collections.abc.Iterable
 
 from django.core.wsgi import get_wsgi_application
 
