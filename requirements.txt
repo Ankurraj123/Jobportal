@@ -19,3 +19,4 @@ pymongo==3.12.3
 dnspython
 django-cors-headers
 django-taggit==3.1.0
+djangorestframework-simplejwt==5.2.2
