@@ -26,7 +26,7 @@ class User(AbstractUser):
     # New fields for CV and Profile
     resume = models.FileField(upload_to='resumes/', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    skills = models.TextField(null=True, blank=True)  # comma-separated
+    skills = models.TextField(null=True, blank=True)  
     education = models.TextField(null=True, blank=True)
     experience = models.TextField(null=True, blank=True)
     # Parsed CV structured sections

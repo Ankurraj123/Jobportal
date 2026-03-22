@@ -1,3 +1,4 @@
+content = """\
 <!-- NAVBAR -->
 <nav class="jp-navbar">
   <div class="container-fluid">
@@ -74,3 +75,14 @@
 
   </div>
 </nav>
+"""
+
+with open(r'template\header.html', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+# verify
+with open(r'template\header.html', 'r', encoding='utf-8') as f:
+    lines = f.readlines()
+print(f"Written {len(lines)} lines.")
+print(lines[7].rstrip())
+print(lines[8].rstrip())
