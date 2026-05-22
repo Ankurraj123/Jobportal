@@ -19,8 +19,8 @@ User = get_user_model()
 
 def home_view(request):
 
-    published_jobs = Job.objects.filter(is_published=True).order_by('-timestamp')
-    jobs = published_jobs.filter(is_closed=False)
+    published_jobs = Job.objects.filter(is_published__in=[True]).order_by('-timestamp')
+    jobs = published_jobs.filter(is_closed__in=[False])
     total_candidates = User.objects.filter(role='employee').count()
     total_companies = User.objects.filter(role='employer').count()
     paginator = Paginator(jobs, 3)
@@ -56,7 +56,7 @@ def home_view(request):
     'total_candidates': total_candidates,
     'total_companies': total_companies,
     'total_jobs': len(jobs),
-    'total_completed_jobs':len(published_jobs.filter(is_closed=True)),
+    'total_completed_jobs':len(published_jobs.filter(is_closed__in=[True])),
     'page_obj': page_obj
     }
     print('ok')
@@ -66,7 +66,7 @@ def job_list_View(request):
     """
 
     """
-    job_list = Job.objects.filter(is_published=True,is_closed=False).order_by('-timestamp')
+    job_list = Job.objects.filter(is_published__in=[True],is_closed__in=[False]).order_by('-timestamp')
     paginator = Paginator(job_list, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

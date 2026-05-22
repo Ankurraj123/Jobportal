@@ -19,13 +19,13 @@ def superuser_required(view_func):
 
 @superuser_required
 def admin_dashboard(request):
-    total_employees = User.objects.filter(role='employee', is_superuser=False).count()
-    total_employers = User.objects.filter(role='employer', is_superuser=False).count()
+    total_employees = User.objects.filter(role='employee', is_superuser__in=[False]).count()
+    total_employers = User.objects.filter(role='employer', is_superuser__in=[False]).count()
     total_jobs = Job.objects.count()
     total_applications = Applicant.objects.count()
-    pending_jobs = Job.objects.filter(is_published=False).count()
-    recent_employees = User.objects.filter(role='employee', is_superuser=False).order_by('-date_joined')[:5]
-    recent_employers = User.objects.filter(role='employer', is_superuser=False).order_by('-date_joined')[:5]
+    pending_jobs = Job.objects.filter(is_published__in=[False]).count()
+    recent_employees = User.objects.filter(role='employee', is_superuser__in=[False]).order_by('-date_joined')[:5]
+    recent_employers = User.objects.filter(role='employer', is_superuser__in=[False]).order_by('-date_joined')[:5]
     recent_jobs = Job.objects.order_by('-timestamp')[:5]
 
     context = {
@@ -44,7 +44,7 @@ def admin_dashboard(request):
 @superuser_required
 def admin_employees(request):
     q = request.GET.get('q', '')
-    employees = User.objects.filter(role='employee', is_superuser=False).order_by('-date_joined')
+    employees = User.objects.filter(role='employee', is_superuser__in=[False]).order_by('-date_joined')
     if q:
         employees = employees.filter(
             Q(email__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q)
@@ -56,7 +56,7 @@ def admin_employees(request):
 @superuser_required
 def admin_employers(request):
     q = request.GET.get('q', '')
-    employers = User.objects.filter(role='employer', is_superuser=False).order_by('-date_joined')
+    employers = User.objects.filter(role='employer', is_superuser__in=[False]).order_by('-date_joined')
     if q:
         employers = employers.filter(
             Q(email__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q)
@@ -73,11 +73,11 @@ def admin_jobs(request):
     if q:
         jobs = jobs.filter(Q(title__icontains=q) | Q(company_name__icontains=q))
     if status == 'pending':
-        jobs = jobs.filter(is_published=False)
+        jobs = jobs.filter(is_published__in=[False])
     elif status == 'active':
-        jobs = jobs.filter(is_published=True, is_closed=False)
+        jobs = jobs.filter(is_published__in=[True], is_closed__in=[False])
     elif status == 'closed':
-        jobs = jobs.filter(is_closed=True)
+        jobs = jobs.filter(is_closed__in=[True])
     context = {'jobs': jobs, 'q': q, 'status': status}
     return render(request, 'admin_panel/jobs.html', context)
 
@@ -101,7 +101,7 @@ def admin_user_detail(request, user_id):
 
 @superuser_required
 def admin_user_edit(request, user_id):
-    user = get_object_or_404(User, id=user_id, is_superuser=False)
+    user = get_object_or_404(User, id=user_id, is_superuser__in=[False])
     if request.method == 'POST':
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
@@ -119,7 +119,7 @@ def admin_user_edit(request, user_id):
 
 @superuser_required
 def admin_toggle_user(request, user_id):
-    user = get_object_or_404(User, id=user_id, is_superuser=False)
+    user = get_object_or_404(User, id=user_id, is_superuser__in=[False])
     user.is_active = not user.is_active
     user.save()
     status = 'activated' if user.is_active else 'deactivated'

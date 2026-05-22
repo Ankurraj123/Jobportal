@@ -34,7 +34,7 @@ class JobListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        queryset = Job.objects.filter(is_published=True, is_closed=False).order_by('-timestamp')
+        queryset = Job.objects.filter(is_published__in=[True], is_closed__in=[False]).order_by('-timestamp')
         keyword = self.request.query_params.get('keyword')
         location = self.request.query_params.get('location')
         category = self.request.query_params.get('category')
