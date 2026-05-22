@@ -22,6 +22,9 @@ RUN pip install --no-cache-dir gunicorn
 # Copy project files
 COPY . /app/
 
+# Run collectstatic to compile static files
+RUN python manage.py collectstatic --noinput
+
 # Expose Django port
 EXPOSE 8000
 
