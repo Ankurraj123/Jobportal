@@ -117,11 +117,7 @@ def single_job_view(request, id):
     """
     Provide the ability to view job details
     """
-    if cache.get(id):
-        job = cache.get(id)
-    else:
-        job = get_object_or_404(Job, id=id)
-        cache.set(id,job , 60 * 15)
+    job = get_object_or_404(Job, id=id)
     
     try:
         related_job_list = job.tags.similar_objects()
