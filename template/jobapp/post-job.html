@@ -59,28 +59,25 @@
                         <div class="form-group">
                         <label for="job-type">Job Type</label>
                         <select name="job_type" class="selectpicker border rounded" id="job-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Job Type">
-                              <option value="1">Full time</option>
-                              <option value="2">Part time</option>
-                              <option value="3" {% if form.type.value == "3" %} selected {% endif %}>Internship</option>
+                              <option value="1" {% if field.value == "1" %} selected {% endif %}>Full time</option>
+                              <option value="2" {% if field.value == "2" %} selected {% endif %}>Part time</option>
+                              <option value="3" {% if field.value == "3" %} selected {% endif %}>Internship</option>
                         </select>
                         </div>
                     
                     {% elif field.name == 'category' %}
                         <div class="form-group">
-                        <label for="job-type">Category</label>
-                        <select name="category" class="selectpicker border rounded" id="job-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Job Type">
-                              
+                        <label for="category">Category</label>
+                        <select name="category" class="selectpicker border rounded" id="category" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Category">
                               {% for category in categories %}
-                              
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-
+                                    <option value="{{ category.id }}" {% if category.id == field.value %} selected {% endif %}>{{ category.name }}</option>
                               {% endfor %}
                         </select>
                         </div>
                                            
                         {% elif field.name == 'description' %}
                               <div class="form-group">
-                                <label for="job-type">Description</label>
+                                <label for="id_{{ field.name }}">Description</label>
                                  <div class="">
                                   {{ form.media }}
                                   {{ form.description }}
@@ -89,9 +86,8 @@
                         {% elif field.name == 'last_date' %}
                         <div class="form-group">
                           <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
-                          <input type="text" class="form-control appointment_date" placeholder="Select Date"
-											    name="{{ field.name }}" id='id="id_{{ field.name }}"' required="true">
-  
+                          <input type="date" class="form-control" placeholder="Select Date"
+											    name="{{ field.name }}" id="id_{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" required="true">
                       </div>
                         {% elif field.name == 'company_description' %}
                               <div class="form-group">

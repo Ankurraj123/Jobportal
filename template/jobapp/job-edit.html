@@ -61,35 +61,28 @@
                     
                     {% elif field.name == 'category' %}
                         <div class="form-group">
-                        <label for="job-type">Category</label>
-                        <select name="category" class="selectpicker border rounded" id="job-type" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Job Type">
-                              
+                        <label for="category">Category</label>
+                        <select name="category" class="selectpicker border rounded" id="category" data-style="btn-black" data-width="100%" data-live-search="true" title="Select Category">
                               {% for category in categories %}
-                              
-                                    <option value="{{ category.id }}" {% if category.id  ==  field.value %} selected {% endif %}>{{ category.name }}</option>
-
+                                    <option value="{{ category.id }}" {% if category.id == field.value %} selected {% endif %}>{{ category.name }}</option>
                               {% endfor %}
-
-
-                             
                         </select>
                         </div>
                         
                         {% elif field.name == 'last_date' %}
                         <div class="form-group">
                           <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
-                          <input type="{{ field.field.widget.input_type }}"
-                                 class="form-control appointment_date"
+                          <input type="date"
+                                 class="form-control"
                                  name="{{ field.name }}"
                                  id="id_{{ field.name }}"
-                                 value="{{ field.value|date:"Y-d-m" }}"
+                                 value="{{ field.value|date:'Y-m-d' }}"
                                  placeholder="{{ field.field.widget.attrs.placeholder }}">
-                                 
                       </div>
 
                         {% elif field.name == 'description' %}
                               <div class="form-group">
-                                <label for="job-type">Description</label>
+                                <label for="id_{{ field.name }}">Description</label>
                                  <div class="">
                                   {{ form.media }}
                                   {{ form.description }}
