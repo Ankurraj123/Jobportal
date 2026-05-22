@@ -220,3 +220,5 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
