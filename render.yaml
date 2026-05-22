@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: django-job-portal
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "*"
+      # For persistence, add MONGODB_URI as an environment variable in the Render UI.
+      # - key: MONGODB_URI
+      #   sync: false

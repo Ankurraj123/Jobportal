@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git
+.github
+.gitignore
+db.sqlite3
+media/
+staticfiles/
+venv/
+env/
+.env
+Dockerfile
+docker-compose.yml
+render.yaml
+*.log
