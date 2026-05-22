@@ -25,5 +25,5 @@ COPY . /app/
 # Expose Django port
 EXPOSE 8000
 
-# Start Gunicorn server in production
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "job.wsgi:application"]
+# Start Gunicorn server in production, running migrations first
+CMD ["sh", "-c", "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 job.wsgi:application"]
