@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect, JsonResponse
@@ -122,7 +122,21 @@ def single_job_view(request, id):
     else:
         job = get_object_or_404(Job, id=id)
         cache.set(id,job , 60 * 15)
-    related_job_list = job.tags.similar_objects()
+    
+    try:
+        related_job_list = job.tags.similar_objects()
+    except Exception:
+        tag_ids = job.tags.values_list('id', flat=True)
+        if tag_ids:
+            related_job_list = Job.objects.filter(
+                tags__id__in=list(tag_ids),
+                is_published__in=[True],
+                is_closed__in=[False]
+            ).exclude(id=job.id).annotate(
+                shared_count=Count('tags')
+            ).order_by('-shared_count', '-timestamp').distinct()
+        else:
+            related_job_list = Job.objects.none()
 
     paginator = Paginator(related_job_list, 5)
     page_number = request.GET.get('page')

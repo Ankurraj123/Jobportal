@@ -100,8 +100,7 @@
                     {% for app in applicants %}
                     <tr>
                         <td style="color:var(--text-muted);">{{ forloop.counter }}</td>
-                        <td><a href="{% url 'admin_panel:user_detail' app.user.id %}">{{
-                                app.user.get_full_name|default:app.user.email }}</a></td>
+                        <td><a href="{% url 'admin_panel:user_detail' app.user.id %}">{{ app.user.get_full_name|default:app.user.email }}</a></td>
                         <td style="color:var(--text-muted); font-size:0.8rem;">{{ app.user.email }}</td>
                         <td style="color:var(--text-muted); font-size:0.8rem;">{{ app.timestamp|date:"d M Y" }}</td>
                         <td><a href="{% url 'admin_panel:user_detail' app.user.id %}" class="jp-btn"

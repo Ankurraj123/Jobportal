@@ -41,10 +41,8 @@
 
             <div class="jp-divider"></div>
             <div style="text-align:left;">
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Gender:</strong> {{
-                    profile_user.get_gender_display }}</p>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Joined:</strong> {{
-                    profile_user.date_joined|date:"d M Y" }}</p>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Gender:</strong> {{ profile_user.get_gender_display }}</p>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;"><strong>Joined:</strong> {{ profile_user.date_joined|date:"d M Y" }}</p>
                 <p style="font-size:0.8rem; color:var(--text-muted);">
                     <strong>Last Login:</strong> {{ profile_user.last_login|date:"d M Y H:i"|default:"Never" }}
                 </p>
