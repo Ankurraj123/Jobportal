@@ -1,5 +1,5 @@
 # Job Portal
-Django Job Portal.   
+Django Job Portal integrated with MongoDB Atlas and GitHub Actions CI/CD.
 
 ## Installation 
 
