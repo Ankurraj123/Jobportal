@@ -5,10 +5,10 @@ Django Job Portal integrated with MongoDB Atlas and GitHub Actions CI/CD.
 
 ```
 open terminal and type
-https://github.com/Sany07/Job-Portal.git
+https://github.com/Ankurraj123/Job-Portal.git
 
 or simply download using the url below
-https://github.com/Sany07/Job-Portal.git
+https://github.com/Ankurraj123/Job-Portal.git
 ```
 
 ## Install requirements
