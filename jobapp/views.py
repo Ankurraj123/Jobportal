@@ -119,20 +119,41 @@ def single_job_view(request, id):
     """
     job = get_object_or_404(Job, id=id)
     
+    # Safe related jobs query for Djongo/MongoDB to avoid recursion/grouping compilation errors
     try:
-        related_job_list = job.tags.similar_objects()
+        tag_ids = list(job.tags.values_list('id', flat=True))
     except Exception:
-        tag_ids = job.tags.values_list('id', flat=True)
-        if tag_ids:
-            related_job_list = Job.objects.filter(
-                tags__id__in=list(tag_ids),
-                is_published__in=[True],
-                is_closed__in=[False]
-            ).exclude(id=job.id).annotate(
-                shared_count=Count('tags')
-            ).order_by('-shared_count', '-timestamp').distinct()
-        else:
-            related_job_list = Job.objects.none()
+        tag_ids = []
+
+    if tag_ids:
+        try:
+            from taggit.models import TaggedItem
+            from django.contrib.contenttypes.models import ContentType
+            from collections import Counter
+            
+            job_content_type = ContentType.objects.get_for_model(Job)
+            related_job_ids = list(TaggedItem.objects.filter(
+                content_type=job_content_type,
+                tag_id__in=tag_ids
+            ).values_list('object_id', flat=True))
+            
+            job_ids = list(map(int, related_job_ids))
+            tag_counts = Counter(job_ids)
+            
+            # Direct simple query of candidates to prevent nested AND NOT/join compilation errors
+            candidates = Job.objects.filter(id__in=job_ids)
+            
+            related_job_list = []
+            for c in candidates:
+                if c.id != job.id and c.is_published and not c.is_closed:
+                    related_job_list.append(c)
+            
+            # Sort by shared tags count (descending) then by timestamp (descending)
+            related_job_list.sort(key=lambda x: (tag_counts[x.id], x.timestamp), reverse=True)
+        except Exception:
+            related_job_list = []
+    else:
+        related_job_list = []
 
     paginator = Paginator(related_job_list, 5)
     page_number = request.GET.get('page')
